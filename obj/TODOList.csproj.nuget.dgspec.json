@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\TODOList\\TODOList\\TODOList.csproj": {}
+    "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\TODOList.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\TODOList\\TODOList\\TODOList.csproj": {
+    "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\TODOList.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\TODOList\\TODOList\\TODOList.csproj",
+        "projectUniqueName": "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\TODOList.csproj",
         "projectName": "TODOList",
-        "projectPath": "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\TODOList\\TODOList\\TODOList.csproj",
+        "projectPath": "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\TODOList.csproj",
         "packagesPath": "C:\\Users\\Anja\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\TODOList\\TODOList\\obj\\",
+        "outputPath": "C:\\Users\\Anja\\Desktop\\TODOList\\TODOList\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
