@@ -1,0 +1,5 @@
+C:\Users\Anja\Desktop\TODOList\TODOList\TODOList\TODOList\obj\Debug\net8.0\TODOList.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Anja\Desktop\TODOList\TODOList\TODOList\TODOList\obj\Debug\net8.0\TODOList.AssemblyInfoInputs.cache
+C:\Users\Anja\Desktop\TODOList\TODOList\TODOList\TODOList\obj\Debug\net8.0\TODOList.AssemblyInfo.cs
+C:\Users\Anja\Desktop\TODOList\TODOList\TODOList\TODOList\obj\Debug\net8.0\TODOList.csproj.CoreCompileInputs.cache
+C:\Users\Anja\Desktop\TODOList\TODOList\TODOList\TODOList\obj\Debug\net8.0\TODOList.sourcelink.json
