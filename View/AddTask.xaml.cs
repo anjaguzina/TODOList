@@ -39,5 +39,13 @@ namespace TODOList.View
             this.Close();
         }
 
+        //ovo ti je cet izgenerisao kako da iz datepickera preuzmes i ucitas datum unet od strane korisnika
+        /*DateTime? selectedDate = DueDatePicker.SelectedDate;
+
+        if (selectedDate.HasValue){
+        DateTime dueDate = selectedDate.Value;
+        // dalje koristiš dueDate
+        }*/
+
     }
 }
