@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using TODOList.Serializer;
+using TODOList.Repository;
 
 namespace TODOList.Model
 {
@@ -16,6 +17,12 @@ namespace TODOList.Model
         public string Description { get; set; }          
         public DateTime DueDate { get; set; }           
         public bool IsCompleted { get; set; }
+
+        public Notification Notification { get; set; }
+
+        public int NotificationId { get; set; }
+
+        public int UserId { get; set; }
 
         public Task() { }
 
@@ -28,7 +35,7 @@ namespace TODOList.Model
 
         public string[] ToCSV()
         {
-            string[] csvValues = { Id.ToString(), Title, Description, DueDate.ToString("dd-MM-yyyy HH:mm:ss"),IsCompleted.ToString() };
+            string[] csvValues = { Id.ToString(), Title, Description, DueDate.ToString("dd-MM-yyyy HH:mm:ss"),IsCompleted.ToString(), NotificationId.ToString() };
             return csvValues;
         }
         public void FromCSV(string[] values)
@@ -38,6 +45,12 @@ namespace TODOList.Model
             Description = values[2];
             DueDate = DateTime.ParseExact(values[3], "dd-MM-yyyy HH:mm:ss", null);
             IsCompleted = bool.Parse(values[4]);
+
+            NotificationId = Convert.ToInt32(values[5]);
+
+            // učitaj iz repozitorijuma
+            NotificationRepository notificationRepository = new NotificationRepository();
+            Notification = notificationRepository.GetById(NotificationId);
         }
     }
 }

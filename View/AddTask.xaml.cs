@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TODOList.Repository;
 
 namespace TODOList.View
 {
@@ -19,6 +20,9 @@ namespace TODOList.View
     /// </summary>
     public partial class AddTask : Window
     {
+        private readonly TaskRepository _repository = new TaskRepository();
+        private readonly NotificationRepository _locationRepository = new NotificationRepository();
+        private readonly int _ownerId;
         public AddTask()
         {
             InitializeComponent();
