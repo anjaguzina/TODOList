@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,11 +24,63 @@ namespace TODOList.View
     public partial class SignInForm : Window
     {
         private readonly UserRepository _repository;
+
+        private string _username;
+        public string Username
+        {
+            get => _username;
+            set
+            {
+                if (value != _username)
+                {
+                    _username = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         public SignInForm()
         {
             InitializeComponent();
             DataContext = this;
             _repository = new UserRepository();
+        }
+
+        private void SignIn(object sender, RoutedEventArgs e)
+        {
+            User user = _repository.GetByUsername(Username);
+            if (user != null)
+            {
+                if (user.Password == txtPassword.Password)
+                {
+                    switch (user.Role)
+                    {
+                        case UserRole.Admin:
+                            new AdminWindow(user).Show();
+                            break;
+                        case UserRole.Standard:
+                            new StandardWindow(user).Show();
+                            break;
+                    }
+
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show("Wrong password!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Wrong username!");
+            }
+
         }
     }
 }
