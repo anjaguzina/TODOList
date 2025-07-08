@@ -6,7 +6,19 @@
         xmlns:local="clr-namespace:TODOList.View"
         mc:Ignorable="d"
         Title="StandardWindow" Height="450" Width="800">
+
     <Grid>
-        
+        <StackPanel Orientation="Vertical" Margin="20">
+            <Button Content="Add new task"
+            Width="200" Height="50"
+            Click="OpenAddWindow_Click"/>
+
+            <Button Content="View current tasks"
+            Width="200" Height="50"
+            Margin="0,10,0,0"
+            Click="Show_Click"/>
+
+
+        </StackPanel>
     </Grid>
 </Window>

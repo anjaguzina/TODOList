@@ -26,5 +26,17 @@ namespace TODOList.View
             InitializeComponent();
             loggedInUser = user;
         }
+
+        private void OpenAddWindow_Click(object sender, RoutedEventArgs e)
+        {
+            AddTask addWindow = new AddTask();
+            addWindow.ShowDialog();
+        }
+
+        private void Show_Click(object sender, RoutedEventArgs e)
+        {
+            ShowTasks searchWindow = new ShowTasks();
+            searchWindow.ShowDialog();
+        }
     }
 }
