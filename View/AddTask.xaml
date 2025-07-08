@@ -7,6 +7,41 @@
         mc:Ignorable="d"
         Title="AddTask" Height="450" Width="800">
     <Grid>
-        
+        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Title:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                <TextBox x:Name="NameTextBox" Grid.Row="0" Grid.Column="1" Width="150" Margin="0,5"/>
+
+                <TextBlock Text="Description:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                <TextBox x:Name="CountryTextBox" Grid.Row="1" Grid.Column="1" Width="150" Margin="0,5"/>
+
+                <TextBlock Text="DueDate:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                <DatePicker x:Name="DueDatePicker" Grid.Row="2" Grid.Column="1" Width="150" Margin="0,5"/>
+
+                <TextBlock Text="Notification:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                <TextBox x:Name="MaxGuestsTextBox" Grid.Row="3" Grid.Column="1" Width="150" Margin="0,5"/>
+            </Grid>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button Content="Cancel" Width="100" Click="Cancel_Click"/>
+                <Button Content="Confirm" Width="100" Margin="10,0,0,0" Click="Confirm_Click"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
