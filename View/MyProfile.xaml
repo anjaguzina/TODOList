@@ -6,7 +6,47 @@
         xmlns:local="clr-namespace:TODOList.View"
         mc:Ignorable="d"
         Title="MyProfile" Height="450" Width="800">
-    <Grid>
-        
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <!-- Leva kolona za profilnu -->
+            <ColumnDefinition Width="*"/>
+            <!-- Desna kolona za taskove -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Leva strana: Profilna i Import Image dugme -->
+        <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10">
+            <!-- Profilna slika (placeholder ako nema slike) -->
+            <Border Width="120" Height="120" BorderBrush="Gray" BorderThickness="1" CornerRadius="60" Margin="0,10">
+                <Image x:Name="ProfileImage"
+                Stretch="UniformToFill"
+                ClipToBounds="True"
+                Width="100" Height="100" />
+            </Border>
+
+            <!-- Dugme za importovanje slike -->
+            <Button Content="Import Image" Width="120" Margin="0,20,0,0" Click="ImportImage_Click"/>
+        </StackPanel>
+
+        <!-- Desna strana: Taskovi i dugmad -->
+        <Grid Grid.Column="1" Margin="20,10,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <!-- Lista taskova -->
+                <RowDefinition Height="Auto"/>
+                <!-- Dugmad -->
+            </Grid.RowDefinitions>
+
+            <!-- Lista taskova -->
+            <ListBox Name="TasksListBox" Grid.Row="0" Margin="0,0,0,10" />
+
+            <!-- Dugmad za manipulaciju taskovima -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" >
+                <Button Content="Add new Task" Width="100" Click="AddTask_Click"/>
+                <Button Content="Edit Task" Width="120" Click="EditTask_Click"/>
+                <Button Content="Delete Task" Width="100" Click="DeleteTask_Click"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
