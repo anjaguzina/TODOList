@@ -1,27 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using TODOList.Model;
+using TODOList.Repository;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TODOList.Model;
 using TODOList.Repository;
 
 namespace TODOList.View
 {
     /// <summary>
-    /// Interaction logic for SignInForm.xaml
+    /// Interaction logic for LoginForm.xaml
     /// </summary>
-    public partial class SignInForm : Window
+    public partial class LogInForm : Window
     {
         private readonly UserRepository _repository;
 
@@ -45,16 +35,23 @@ namespace TODOList.View
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public SignInForm()
+
+        public LogInForm()
         {
             InitializeComponent();
             DataContext = this;
             _repository = new UserRepository();
         }
 
-        private void SignIn(object sender, RoutedEventArgs e)
+        private void SignIn_Click(object sender, RoutedEventArgs e) {
+            AddUser addWindow = new AddUser();
+            addWindow.ShowDialog();
+        }
+
+        private void LogIn_Click(object sender, RoutedEventArgs e)
         {
             User user = _repository.GetByUsername(Username);
+
             if (user != null)
             {
                 if (user.Password == txtPassword.Password)
@@ -62,10 +59,17 @@ namespace TODOList.View
                     switch (user.Role)
                     {
                         case UserRole.Admin:
-                            new AdminWindow(user).Show();
+                            ViewAllUsers viewAllUsersWindow = new ViewAllUsers();
+                            viewAllUsersWindow.ShowDialog();
                             break;
+
                         case UserRole.Standard:
-                            new StandardWindow(user).Show();
+                            MyProfile myWindow = new MyProfile();
+                            myWindow.ShowDialog();
+                            break;
+
+                        default:
+                            MessageBox.Show("User role not supported.");
                             break;
                     }
 
@@ -80,7 +84,7 @@ namespace TODOList.View
             {
                 MessageBox.Show("Wrong username!");
             }
-
         }
+
     }
 }
