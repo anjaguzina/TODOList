@@ -27,5 +27,29 @@ namespace TODOList.Repository
             _users = _serializer.FromCSV(FilePath);
             return _users.FirstOrDefault(u => u.Username == username);
         }
+
+        public List<User> GetAll()
+        {
+            return _serializer.FromCSV(FilePath);
+        }
+
+        public User Save(User user)
+        {
+            user.Id = NextId();
+            _users = _serializer.FromCSV(FilePath);
+            _users.Add(user);
+            _serializer.ToCSV(FilePath, _users);
+            return user;
+        }
+
+        public int NextId()
+        {
+            _users = _serializer.FromCSV(FilePath);
+            if (_users.Count < 1)
+            {
+                return 1;
+            }
+            return _users.Max(c => c.Id) + 1;
+        }
     }
 }

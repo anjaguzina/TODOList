@@ -16,6 +16,13 @@ namespace TODOList.Model
     {
         public int Id { get; set; }
         public string Username { get; set; } 
+
+        public string Name { get; set; }
+
+        public string Surname { get; set; }
+
+        public string Email { get; set; }
+
         
         public string Password { get; set; }
 
@@ -23,21 +30,27 @@ namespace TODOList.Model
 
         public User() { }
 
-        public User(string username, string pass, UserRole role) {
+        public User(string username, string pass,string name, string surname, string mail, UserRole role) {
             Username = username;
             Password = pass;
+            Name = name;
+            Surname = surname;
+            Email = mail;
             Role = role;
         }
 
         public string[] ToCSV() {
-            string[] csvValues = { Id.ToString(), Username, Password, Role.ToString() };
+            string[] csvValues = { Id.ToString(), Username, Password,Name, Surname, Email, Role.ToString() };
             return csvValues;
         }
         public void FromCSV(string[] values) {
             Id = Convert.ToInt32(values[0]);
             Username = values[1];
             Password = values[2];
-            Role = Enum.Parse<UserRole>(values[3]);
+            Name = values[3];
+            Surname = values[4];
+            Email = values[5];
+            Role = Enum.Parse<UserRole>(values[6]);
 
         }
     }
