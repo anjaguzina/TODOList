@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using TODOList.DAO;
 using TODOList.Serializer;
 
 namespace TODOList.Model
 {
     //ako ti posle bude bilo neophodno jos nesto od polja tipa CreationDate dodaj posle ili tipa AdditionalComment
-    public class Notification: TODOList.Serializer.ISerializable
+    public class Notification: TODOList.Serializer.ISerializable, IAccess<Notification>
     {
         public int Id { get; set; }
 
@@ -22,13 +25,22 @@ namespace TODOList.Model
 
         public Notification() { }
 
-        public Notification(string message, bool isactive, int user)
+        public Notification(int id, string message, bool isactive, int user)
         {
+            Id = id;
             Message = message;
             UserId = user;
             IsActive = isactive;
         }
 
+        public void Copy(Notification obj)
+        {
+            Id = obj.Id;
+            Message = obj.Message;
+            UserId = obj.UserId;
+            IsActive = obj.IsActive;
+
+        }
         public string[] ToCSV()
         {
             string[] csvValues = { Id.ToString(), UserId.ToString(), IsActive.ToString(), Message };

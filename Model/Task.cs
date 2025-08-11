@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using TODOList.Serializer;
 using TODOList.Repository;
+using TODOList.DAO;
 
 namespace TODOList.Model
 {
-    public class Task: ISerializable
+    public class Task: ISerializable, IAccess<Task>
     {
         public int Id { get; set; }                     
         public string Title { get; set; }                
@@ -26,11 +26,23 @@ namespace TODOList.Model
 
         public Task() { }
 
-        public Task(string title, string description, DateTime duedate, bool isdone) {
+        public Task(int id, string title, string description, DateTime duedate, bool isdone) {
+            Id = id;
             Title = title;
             Description = description;
             DueDate = duedate;
             IsCompleted = isdone;
+        }
+
+        public void Copy(Task obj)
+        {
+            Id = obj.Id;
+           Title = obj.Title;
+            Description = obj.Description;
+            DueDate = obj.DueDate;
+            IsCompleted = obj.IsCompleted;
+            Notification.Copy(obj.Notification);
+
         }
 
         public string[] ToCSV()

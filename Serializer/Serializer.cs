@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TODOList.Serializer
 {
-    class Serializer<T> where T: ISerializable, new()
+   public class Serializer<T> where T: ISerializable, new()
     {
         private const char Delimiter = '|';
 
