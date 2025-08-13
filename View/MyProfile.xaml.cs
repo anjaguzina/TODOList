@@ -38,6 +38,7 @@ namespace TODOList.View
         private int _currentPageNumber = 1;
         private int _maxItemsPerPage = 5;
         private int _totalNumberOfPages = 1;
+        private bool _isAscending = true;
         public ObservableCollection<TaskDTO> Tasks { get; set; }
         public MyProfile(int userId)
         {
@@ -262,5 +263,28 @@ namespace TODOList.View
             TasksListBox.ItemsSource = pagedTasks;
         }
 
+        private void SortByDueDate_Click(object sender, RoutedEventArgs e)
+        {
+            if (_filteredTasks == null || !_filteredTasks.Any())
+                return;
+
+            if (_isAscending)
+            {
+                _filteredTasks = new ObservableCollection<TaskDTO>(
+                    _filteredTasks.OrderBy(t => t.DueDate)
+                );
+            }
+            else
+            {
+                _filteredTasks = new ObservableCollection<TaskDTO>(
+                    _filteredTasks.OrderByDescending(t => t.DueDate)
+                );
+            }
+
+            _isAscending = !_isAscending; // obrni smer za sledeći klik
+            CurrentPageNumber = 1; // resetuj na prvu stranicu nakon sortiranja
+            ChangeMovePageButtonsVisibility();
+            ApplyPaging(this, null);
+        }
     }
 }
