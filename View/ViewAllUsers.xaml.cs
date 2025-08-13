@@ -11,8 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TODOList.Controller;
+using TODOList.DTO;
 using TODOList.Model;
-using TODOList.Repository;
 
 namespace TODOList.View
 {
@@ -21,19 +22,23 @@ namespace TODOList.View
     /// </summary>
     public partial class ViewAllUsers : Window
     {
-        private readonly UserRepository _repository;
-        private List<User> _allUsers;
+       
+        private readonly MainController controller;
+        private List<UserDTO> allUsers;
         public ViewAllUsers()
         {
             InitializeComponent();
-            _repository = new UserRepository();
+            controller = new MainController();
             LoadAllUsers();
         }
 
         private void LoadAllUsers()
         {
-            _allUsers = _repository.GetAll();
-            lvResults.ItemsSource = _allUsers;
+            allUsers = controller.GetAllUsers()
+                                  .Select(u => new UserDTO(u))
+                                  .ToList();
+
+            lvResults.ItemsSource = allUsers;
         }
     }
 }

@@ -36,7 +36,6 @@ namespace TODOList.View
            
             _taskDTO = new TaskDTO(taskOld);
             DataContext = _taskDTO;
-           // controller.publisher.Subscribe(this);
         }
 
         private bool EmptyTextBoxCheck()

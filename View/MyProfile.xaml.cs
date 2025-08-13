@@ -12,7 +12,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.IO;
-using TODOList.Repository;
 using TODOList.Model;
 using TODOList.Controller;
 using TODOList.DTO;
@@ -28,7 +27,6 @@ namespace TODOList.View
     /// </summary>
     public partial class MyProfile : Window
     {
-        private readonly TaskRepository repository;
         private List<TODOList.Model.Task> tasks;
         private MainController controller;
         private int _userId;
@@ -46,7 +44,6 @@ namespace TODOList.View
             Uri uri = new Uri("https://cdn-icons-png.flaticon.com/512/847/847969.png");
             BitmapImage bitmap = new BitmapImage(uri);
             controller = new MainController();
-            repository = new TaskRepository();
             taskDTO = new TaskDTO();
             ProfileImage.Source = bitmap;
             _userId = userId;

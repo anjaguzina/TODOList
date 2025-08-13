@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualBasic;
 using TODOList.Serializer;
-using TODOList.Repository;
 using TODOList.DAO;
 
 namespace TODOList.Model
@@ -61,9 +60,6 @@ namespace TODOList.Model
 
             UserId = Convert.ToInt32(values[5]);
 
-            // učitaj iz repozitorijuma
-            NotificationRepository notificationRepository = new NotificationRepository();
-            Notification = notificationRepository.GetById(NotificationId);
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Text;
 using TODOList.DAO;
 using TODOList.Model;
 using TODOList.Observer;
+using TODOList.Serializer;
 
 namespace TODOList.Controller;
 
@@ -17,7 +18,9 @@ public class MainController
     public DAO<Notification> daoNotification;
     public DAO<Task> daoTask;
     public DAO<User> daoUser;
-   
+    private readonly Serializer<User> _serializer;
+    private List<User> _users;
+
 
     public Subject publisher;
 
@@ -27,7 +30,7 @@ public class MainController
         daoNotification = new DAO<Notification>();
         daoTask = new DAO<Task>();
         daoUser = new DAO<User>();
-      
+        _serializer = new Serializer<User>();
     }
 
     
@@ -104,7 +107,12 @@ public class MainController
         publisher.NotifyObservers();
     }
 
-       
+    public User GetByUsername(string username)
+    {
+        _users = _serializer.FromCSV("../../../Resources/Data/User.csv");
+        return _users.FirstOrDefault(u => u.Username == username);
+    }
+
 
     public void SaveAllToStorage()
     {

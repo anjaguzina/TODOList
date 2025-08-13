@@ -32,7 +32,7 @@ namespace TODOList.Model
 
         public User() { }
 
-        public User(string username, string pass,string name, string surname, string mail, UserRole role) {
+        public User(int id, string username, string pass,string name, string surname, string mail, UserRole role) {
             Username = username;
             Password = pass;
             Name = name;

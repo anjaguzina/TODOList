@@ -11,8 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TODOList.Controller;
+using TODOList.DTO;
 using TODOList.Model;
-using TODOList.Repository;
 
 namespace TODOList.View
 {
@@ -21,11 +22,14 @@ namespace TODOList.View
     /// </summary>
     public partial class AddUser : Window
     {
-        private readonly UserRepository _repository = new UserRepository();
+        private readonly MainController controller;
+        private UserDTO userDTO;
 
         public AddUser()
         {
             InitializeComponent();
+            controller = new MainController();
+            userDTO = new UserDTO();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -47,24 +51,21 @@ namespace TODOList.View
             }
 
             // Provera da li korisnik sa tim korisničkim imenom već postoji
-            if (_repository.GetByUsername(UsernameTextBox.Text.Trim()) != null)
+            if (controller.GetByUsername(UsernameTextBox.Text.Trim()) != null)
             {
                 MessageBox.Show("A user with that username already exists.");
                 return;
             }
 
-            // Kreiranje korisnika
-            var newUser = new User
-            {
-                Username = UsernameTextBox.Text.Trim(),
-                Password = PasswordTextBox.Text.Trim(),
-                Name = NameTextBox.Text.Trim(),
-                Surname = SurnameTextBox.Text.Trim(),
-                Email = EmailTextBox.Text.Trim(),
-                Role = UserRole.Standard // Pretpostavljamo da se registruje kao Standard korisnik
-            };
+            userDTO.Username = UsernameTextBox.Text.Trim();
+            userDTO.Password = PasswordTextBox.Text.Trim();
+            userDTO.Name = NameTextBox.Text.Trim();
+            userDTO.Surname = SurnameTextBox.Text.Trim();
+            userDTO.Email = EmailTextBox.Text.Trim();
+            userDTO.Role = UserRole.Standard; // Pretpostavljamo da je novi korisnik Standard
 
-            _repository.Save(newUser);
+           
+            controller.AddUser(userDTO.ToUser());
             MessageBox.Show("User added successfully!");
 
             this.Close();

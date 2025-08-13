@@ -1,10 +1,10 @@
 ﻿using TODOList.Model;
-using TODOList.Repository;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using TODOList.Model;
-using TODOList.Repository;
+using TODOList.Controller;
+using TODOList.DTO;
 
 namespace TODOList.View
 {
@@ -13,34 +13,18 @@ namespace TODOList.View
     /// </summary>
     public partial class LogInForm : Window
     {
-        private readonly UserRepository _repository;
+        private MainController controller;
+        private UserDTO userDTO;
 
-        private string _username;
-        public string Username
-        {
-            get => _username;
-            set
-            {
-                if (value != _username)
-                {
-                    _username = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public LogInForm()
         {
             InitializeComponent();
-            DataContext = this;
-            _repository = new UserRepository();
+           
+           // _repository = new UserRepository();
+            userDTO = new UserDTO();
+            DataContext = userDTO;
+            controller = new MainController();
         }
 
         private void SignIn_Click(object sender, RoutedEventArgs e) {
@@ -50,7 +34,8 @@ namespace TODOList.View
 
         private void LogIn_Click(object sender, RoutedEventArgs e)
         {
-            User user = _repository.GetByUsername(Username);
+            string Username = userDTO.Username;
+            User user = controller.GetByUsername(Username);
 
             if (user != null)
             {
