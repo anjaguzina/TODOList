@@ -10,22 +10,17 @@
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
-            <!-- Leva kolona za profilnu -->
             <ColumnDefinition Width="*"/>
-            <!-- Desna kolona za taskove -->
         </Grid.ColumnDefinitions>
 
         <!-- Leva strana: Profilna i Import Image dugme -->
         <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10">
-            <!-- Profilna slika (placeholder ako nema slike) -->
             <Border Width="120" Height="120" BorderBrush="Gray" BorderThickness="1" CornerRadius="60" Margin="0,10">
                 <Image x:Name="ProfileImage"
-                Stretch="UniformToFill"
-                ClipToBounds="True"
-                Width="100" Height="100" />
+                       Stretch="UniformToFill"
+                       ClipToBounds="True"
+                       Width="100" Height="100" />
             </Border>
-
-            <!-- Dugme za importovanje slike -->
             <Button Content="Import Image" Width="120" Margin="0,20,0,0" Click="ImportImage_Click"/>
         </StackPanel>
 
@@ -35,7 +30,9 @@
                 <RowDefinition Height="*"/>
                 <!-- Lista taskova -->
                 <RowDefinition Height="Auto"/>
-                <!-- Dugmad -->
+                <!-- Dugmad za taskove -->
+                <RowDefinition Height="Auto"/>
+                <!-- Paginacija -->
             </Grid.RowDefinitions>
 
             <!-- Lista taskova -->
@@ -52,11 +49,28 @@
             </ListBox>
 
             <!-- Dugmad za manipulaciju taskovima -->
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" >
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
                 <Button Content="Add new Task" Width="100" Click="AddTask_Click"/>
                 <Button Content="Edit Task" Width="120" Click="EditTask_Click"/>
                 <Button Content="Delete Task" Width="100" Click="DeleteTask_Click"/>
             </StackPanel>
+
+            <!-- Paging control -->
+            <DockPanel Grid.Row="2" Margin="20,10,20,0" LastChildFill="False" Height="45" VerticalAlignment="Center">
+                <Button x:Name="buttonRightPage" DockPanel.Dock="Right" Click="MoveToRightPage"
+                        BorderBrush="{x:Null}" Background="Transparent" BorderThickness="0">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72A;" FontSize="16"/>
+                </Button>
+
+                <Label x:Name="labelCurrentPage" Height="25" Width="40" DockPanel.Dock="Right"
+                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14"/>
+
+                <Button x:Name="buttonLeftPage" DockPanel.Dock="Right" Click="MoveToLeftPage"
+                        BorderBrush="{x:Null}" Background="Transparent" BorderThickness="0">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72B;" FontSize="16"/>
+                </Button>
+            </DockPanel>
+
         </Grid>
     </Grid>
 </Window>

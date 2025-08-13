@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,6 +17,9 @@ using TODOList.Model;
 using TODOList.Controller;
 using TODOList.DTO;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.DirectoryServices;
+using System.Windows.Threading;
 
 namespace TODOList.View
 {
@@ -30,7 +32,12 @@ namespace TODOList.View
         private List<TODOList.Model.Task> tasks;
         private MainController controller;
         private int _userId;
-        private TaskDTO taskDTO;
+        private TaskDTO taskDTO;    
+        private ObservableCollection<TaskDTO> _tasks = new ObservableCollection<TaskDTO>();
+        private ObservableCollection<TaskDTO> _filteredTasks;
+        private int _currentPageNumber = 1;
+        private int _maxItemsPerPage = 5;
+        private int _totalNumberOfPages = 1;
         public ObservableCollection<TaskDTO> Tasks { get; set; }
         public MyProfile(int userId)
         {
@@ -46,6 +53,26 @@ namespace TODOList.View
             TasksListBox.ItemsSource = Tasks;
             LoadTasks();
         }
+        public int CurrentPageNumber
+        {
+            get { return _currentPageNumber; }
+            set
+            {
+                _currentPageNumber = value;
+                labelCurrentPage.Content = $"{_currentPageNumber} / {_totalNumberOfPages}";
+            }
+        }
+
+        public int TotalNumberOfPages
+        {
+            get { return _totalNumberOfPages; }
+            set
+            {
+                _totalNumberOfPages = value;
+                labelCurrentPage.Content = $"{_currentPageNumber} / {_totalNumberOfPages}";
+            }
+        }
+
 
         private void AddTask_Click(object sender, RoutedEventArgs e) {
             AddTask addTask = new AddTask(controller,_userId);
@@ -118,10 +145,8 @@ namespace TODOList.View
             {
                 try
                 {
-                    // Pozovi kontroler da obriše task po ID-ju
                     controller.DeleteTask(selectedTaskDTO.Id);
                     controller.SaveAllToStorage();
-                    // Osveži prikaz taskova
                     LoadTasks();
                 }
                 catch (Exception ex)
@@ -131,6 +156,10 @@ namespace TODOList.View
             }
         }
 
+        private object GetPropertyValue(object obj, string propertyName)
+        {
+            return obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);
+        }
 
         private void LoadTasks()
         {
@@ -142,6 +171,95 @@ namespace TODOList.View
             {
                 Tasks.Add(new TaskDTO(t));
             }
+            _filteredTasks = new ObservableCollection<TaskDTO>(
+    userTasks.Select(t => new TaskDTO(t))
+);
+
+            TotalNumberOfPages = Math.Max(1, (int)Math.Ceiling((double)_filteredTasks.Count / _maxItemsPerPage));
+            CurrentPageNumber = 1;
+
+            ChangeMovePageButtonsVisibility();
+            ApplyPaging(this, null);
+        }
+
+        private void MoveToLeftPage(object sender, RoutedEventArgs e)
+        {
+            CurrentPageNumber = Math.Max(1, CurrentPageNumber - 1);
+
+            ChangeMovePageButtonsVisibility();
+
+            ApplyPaging(sender, e);
+        }
+
+        private void MoveToRightPage(object sender, RoutedEventArgs e)
+        {
+            CurrentPageNumber = Math.Min(TotalNumberOfPages, CurrentPageNumber + 1);
+
+            ChangeMovePageButtonsVisibility();
+
+            ApplyPaging(sender, e);
+        }
+
+        private void ChangeMovePageButtonsVisibility()
+        {
+            if (TotalNumberOfPages == 1)
+            {
+                buttonLeftPage.IsEnabled = false;
+                buttonLeftPage.Opacity = 0.5;
+
+                labelCurrentPage.IsEnabled = false;
+                labelCurrentPage.Opacity = 0.5;
+
+                buttonRightPage.IsEnabled = false;
+                buttonRightPage.Opacity = 0.5;
+            }
+            else if (CurrentPageNumber == TotalNumberOfPages)
+            {
+                buttonLeftPage.IsEnabled = true;
+                buttonLeftPage.Opacity = 1.0;
+
+                labelCurrentPage.IsEnabled = true;
+                labelCurrentPage.Opacity = 1.0;
+
+                buttonRightPage.IsEnabled = false;
+                buttonRightPage.Opacity = 0.5;
+            }
+            else if (CurrentPageNumber == 1 && TotalNumberOfPages > 1)
+            {
+                buttonLeftPage.IsEnabled = false;
+                buttonLeftPage.Opacity = 0.5;
+
+                labelCurrentPage.IsEnabled = true;
+                labelCurrentPage.Opacity = 1.0;
+
+                buttonRightPage.IsEnabled = true;
+                buttonRightPage.Opacity = 1.0;
+            }
+            else
+            {
+                buttonLeftPage.IsEnabled = true;
+                buttonLeftPage.Opacity = 1.0;
+
+                labelCurrentPage.IsEnabled = true;
+                labelCurrentPage.Opacity = 1.0;
+
+                buttonRightPage.IsEnabled = true;
+                buttonRightPage.Opacity = 1.0;
+            }
+        }
+
+        private void ApplyPaging(object sender, RoutedEventArgs e)
+        {
+            if (_filteredTasks == null || !_filteredTasks.Any())
+                return;
+
+            // Prikaži samo stavke za trenutnu stranicu
+            var pagedTasks = _filteredTasks
+                .Skip((CurrentPageNumber - 1) * _maxItemsPerPage)
+                .Take(_maxItemsPerPage)
+                .ToList();
+
+            TasksListBox.ItemsSource = pagedTasks;
         }
 
     }
