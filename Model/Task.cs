@@ -26,12 +26,13 @@ namespace TODOList.Model
 
         public Task() { }
 
-        public Task(int id, string title, string description, DateTime duedate, bool isdone) {
+        public Task(int id, string title, string description, DateTime duedate, bool isdone,int userId) {
             Id = id;
             Title = title;
             Description = description;
             DueDate = duedate;
             IsCompleted = isdone;
+            UserId = userId;
         }
 
         public void Copy(Task obj)
@@ -41,13 +42,13 @@ namespace TODOList.Model
             Description = obj.Description;
             DueDate = obj.DueDate;
             IsCompleted = obj.IsCompleted;
-            Notification.Copy(obj.Notification);
-
+            //Notification.Copy(obj.Notification);
+            UserId=obj.UserId;
         }
 
         public string[] ToCSV()
         {
-            string[] csvValues = { Id.ToString(), Title, Description, DueDate.ToString("dd-MM-yyyy HH:mm:ss"),IsCompleted.ToString(), NotificationId.ToString() };
+            string[] csvValues = { Id.ToString(), Title, Description, DueDate.ToString("dd-MM-yyyy"),IsCompleted.ToString(), UserId.ToString() };
             return csvValues;
         }
         public void FromCSV(string[] values)
@@ -55,10 +56,10 @@ namespace TODOList.Model
             Id = Convert.ToInt32(values[0]);
             Title = values[1];
             Description = values[2];
-            DueDate = DateTime.ParseExact(values[3], "dd-MM-yyyy HH:mm:ss", null);
+            DueDate = DateTime.ParseExact(values[3], "dd-MM-yyyy", null);
             IsCompleted = bool.Parse(values[4]);
 
-            NotificationId = Convert.ToInt32(values[5]);
+            UserId = Convert.ToInt32(values[5]);
 
             // učitaj iz repozitorijuma
             NotificationRepository notificationRepository = new NotificationRepository();

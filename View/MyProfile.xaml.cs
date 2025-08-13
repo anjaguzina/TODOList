@@ -15,6 +15,9 @@ using Microsoft.Win32;
 using System.IO;
 using TODOList.Repository;
 using TODOList.Model;
+using TODOList.Controller;
+using TODOList.DTO;
+using System.Collections.ObjectModel;
 
 namespace TODOList.View
 {
@@ -25,17 +28,29 @@ namespace TODOList.View
     {
         private readonly TaskRepository repository;
         private List<TODOList.Model.Task> tasks;
-        public MyProfile()
+        private MainController controller;
+        private int _userId;
+        private TaskDTO taskDTO;
+        public ObservableCollection<TaskDTO> Tasks { get; set; }
+        public MyProfile(int userId)
         {
             InitializeComponent();
             Uri uri = new Uri("https://cdn-icons-png.flaticon.com/512/847/847969.png");
             BitmapImage bitmap = new BitmapImage(uri);
+            controller = new MainController();
+            repository = new TaskRepository();
+            taskDTO = new TaskDTO();
             ProfileImage.Source = bitmap;
+            _userId = userId;
+            Tasks = new ObservableCollection<TaskDTO>();
+            TasksListBox.ItemsSource = Tasks;
+            LoadTasks();
         }
 
         private void AddTask_Click(object sender, RoutedEventArgs e) {
-            AddTask addTask = new AddTask();
+            AddTask addTask = new AddTask(controller,_userId);
             addTask.ShowDialog();
+            LoadTasks();
         }
 
         private void ImportImage_Click(object sender, RoutedEventArgs e)
@@ -69,21 +84,30 @@ namespace TODOList.View
         }
 
         private void EditTask_Click(object sender, RoutedEventArgs e) {
-            EditTask editTask = new EditTask();
+            var selectedTask = TasksListBox.SelectedItem as TaskDTO; // ili Task model, zavisi šta koristiš
+            if (selectedTask == null)
+            {
+                MessageBox.Show("Please select a task to edit.");
+                return;
+            }
+
+            EditTask editTask = new EditTask(controller, selectedTask);
             editTask.ShowDialog();
+
+            LoadTasks(); // osveži prikaz nakon izmene
         }
 
         private void DeleteTask_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Provera da li je nešto selektovano u ListBox-u
-            TODOList.Model.Task selectedTask = TasksListBox.SelectedItem as TODOList.Model.Task;
-            if (selectedTask == null)
+            // Uzmi selektovani TaskDTO iz ListBox-a
+            TaskDTO selectedTaskDTO = TasksListBox.SelectedItem as TaskDTO;
+            if (selectedTaskDTO == null)
             {
                 MessageBox.Show("Please select a task to delete.", "No Task Selected", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // 2. Dijalog za potvrdu brisanja
+            // Potvrda brisanja
             MessageBoxResult result = MessageBox.Show(
                 "Are you sure you want to delete this task?",
                 "Confirm Deletion",
@@ -94,9 +118,11 @@ namespace TODOList.View
             {
                 try
                 {
-                    //TaskRepository repository = new TaskRepository();
-                    repository.Delete(selectedTask); // Briše iz CSV-a
-                    LoadTasks(); // Osvežava prikaz u ListBox-u
+                    // Pozovi kontroler da obriše task po ID-ju
+                    controller.DeleteTask(selectedTaskDTO.Id);
+                    controller.SaveAllToStorage();
+                    // Osveži prikaz taskova
+                    LoadTasks();
                 }
                 catch (Exception ex)
                 {
@@ -105,16 +131,17 @@ namespace TODOList.View
             }
         }
 
+
         private void LoadTasks()
         {
-            //TaskRepository repository = new TaskRepository();
-            //List<Task> tasks = repository.GetAll(); // Pretpostavka: učitava sve taskove iz CSV-a
+            Tasks.Clear();
 
-            // Ako taskovi treba da budu filtrirani po korisniku:
-            // tasks = tasks.Where(t => t.UserId == currentUser.Id).ToList();
-
-            TasksListBox.ItemsSource = null;
-            TasksListBox.ItemsSource = tasks;
+            var allTasks = controller.GetAllTasks(); // ili kako već dobijaš listu taskova
+            var userTasks = allTasks.Where(t => t.UserId == _userId);
+            foreach (var t in userTasks)
+            {
+                Tasks.Add(new TaskDTO(t));
+            }
         }
 
     }

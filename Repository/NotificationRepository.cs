@@ -10,7 +10,7 @@ namespace TODOList.Repository
 {
     public class NotificationRepository
     {
-        private const string FilePath = "../../../Resources/Data/notifications.csv";
+        private const string FilePath = "../../../Resources/Data/Notification.csv";
         private readonly Serializer<Notification> _serializer;
         private List<Notification> _notifications;
 

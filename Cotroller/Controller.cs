@@ -12,7 +12,7 @@ using TODOList.Observer;
 
 namespace TODOList.Controller;
 
-public class Controller
+public class MainController
 {
     public DAO<Notification> daoNotification;
     public DAO<Task> daoTask;
@@ -21,7 +21,7 @@ public class Controller
 
     public Subject publisher;
 
-    public Controller()
+    public MainController()
     {
         publisher = new Subject();
         daoNotification = new DAO<Notification>();
@@ -32,17 +32,17 @@ public class Controller
 
     
 
-    public List<Task> GetAllStudents()
+    public List<Task> GetAllTasks()
     {
         return daoTask.GetAllObjects();
     }
 
-    public List<Notification> GetAllProfessors()
+    public List<Notification> GetAllNotifications()
     {
         return daoNotification.GetAllObjects();
     }
 
-    public List<User> GetAllSubjects()
+    public List<User> GetAllUsers()
     {
         return daoUser.GetAllObjects();
     }

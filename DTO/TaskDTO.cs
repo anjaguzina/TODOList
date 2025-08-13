@@ -18,32 +18,36 @@ namespace TODOList.DTO
             
         }
 
-        public TaskDTO(string title, string description, DateTime duedate, bool isCompleted )
+        public TaskDTO(int id, string title, string description, DateTime duedate, bool isCompleted, int userId )
         {
+            this.id = id;
             this.title = title;
             this.description = description;
             this.dueDate = duedate;
             this.isCompleted = isCompleted;
+            this.userId = userId;
         }
 
         public TaskDTO(Task t)
         {
+            id = t.Id;
             title = t.Title;
             description = t.Description;
             dueDate = t.DueDate;
             isCompleted = t.IsCompleted;         
-           
+           userId = t.UserId;
         }
 
        
 
         public TaskDTO(TaskDTO t)
         {
+            id = t.id;
             title = t.title;
             description = t.description;
             dueDate = t.dueDate;
             isCompleted = t.isCompleted;
-            
+            userId= t.UserId;
         }
 
         private int id;
@@ -119,11 +123,25 @@ namespace TODOList.DTO
             }
         }
 
-       
+        private int userId;
+        public int UserId
+        {
+            get { return userId; }
+            set
+            {
+                if (value != userId)
+                {
+                    userId = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
 
         public Task ToTask()
         {
-            return new Task(id, title, description, dueDate, isCompleted);
+            return new Task(id, title, description, dueDate, isCompleted, userId);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

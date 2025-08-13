@@ -10,7 +10,7 @@ namespace TODOList.Repository
 {
     public class TaskRepository
     {
-        private const string FilePath = "../../../Resources/Data/tasks.csv";
+        private const string FilePath = "../../../Resources/Data/Task.csv";
 
         private readonly Serializer<Task> _serializer;
 

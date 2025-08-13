@@ -64,7 +64,7 @@ namespace TODOList.View
                             break;
 
                         case UserRole.Standard:
-                            MyProfile myWindow = new MyProfile();
+                            MyProfile myWindow = new MyProfile(user.Id);
                             myWindow.ShowDialog();
                             break;
 

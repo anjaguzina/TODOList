@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TODOList.Controller;
 using TODOList.Model;
 
 namespace TODOList.View
@@ -21,6 +22,7 @@ namespace TODOList.View
     public partial class StandardWindow : Window
     {
         private User loggedInUser;
+        private MainController controller;
         public StandardWindow(User user)
         {
             InitializeComponent();
@@ -29,7 +31,7 @@ namespace TODOList.View
 
         private void OpenAddWindow_Click(object sender, RoutedEventArgs e)
         {
-            AddTask addWindow = new AddTask();
+            AddTask addWindow = new AddTask(controller, loggedInUser.Id);
             addWindow.ShowDialog();
         }
 

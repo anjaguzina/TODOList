@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace TODOList.Serializer;
 public class Storage<T> where T : ISerializable, new()
 {
-    private readonly string _fileName = @"../../../../TODOList/Resources/{0}";
+    private readonly string _fileName = @"../../../../TODOList/Resources/Data/{0}";
 
 
     private readonly Serializer<T> _serializer = new();

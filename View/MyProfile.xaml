@@ -39,7 +39,17 @@
             </Grid.RowDefinitions>
 
             <!-- Lista taskova -->
-            <ListBox Name="TasksListBox" Grid.Row="0" Margin="0,0,0,10" />
+            <ListBox Name="TasksListBox" Grid.Row="0" Margin="0,0,0,10">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Description}" FontStyle="Italic" Foreground="DarkSlateGray" Margin="0,2,0,0"/>
+                            <TextBlock Text="{Binding DueDate, StringFormat='Due: {0:dd.MM.yyyy}'}" FontSize="12" Foreground="Gray"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
 
             <!-- Dugmad za manipulaciju taskovima -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" >
