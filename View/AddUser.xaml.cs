@@ -36,12 +36,12 @@ namespace TODOList.View
         {
             this.Close();
         }
-
+      
         private void Confirm_Click(object sender, RoutedEventArgs e)
         {
             // Validacija unosa
             if (string.IsNullOrWhiteSpace(UsernameTextBox.Text) ||
-                string.IsNullOrWhiteSpace(PasswordTextBox.Text) ||
+                string.IsNullOrWhiteSpace(PasswordTextBox.Password) ||
                 string.IsNullOrWhiteSpace(NameTextBox.Text) ||
                 string.IsNullOrWhiteSpace(SurnameTextBox.Text) ||
                 string.IsNullOrWhiteSpace(EmailTextBox.Text))
@@ -58,7 +58,7 @@ namespace TODOList.View
             }
 
             userDTO.Username = UsernameTextBox.Text.Trim();
-            userDTO.Password = PasswordTextBox.Text.Trim();
+            userDTO.Password = PasswordTextBox.Password.Trim();
             userDTO.Name = NameTextBox.Text.Trim();
             userDTO.Surname = SurnameTextBox.Text.Trim();
             userDTO.Email = EmailTextBox.Text.Trim();

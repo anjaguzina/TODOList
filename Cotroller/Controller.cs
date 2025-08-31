@@ -113,7 +113,11 @@ public class MainController
         return _users.FirstOrDefault(u => u.Username == username);
     }
 
-
+    public User GetUserById(int id)
+    {
+        _users = _serializer.FromCSV("../../../Resources/Data/User.csv"); // učitaj sve korisnike iz CSV
+        return _users.FirstOrDefault(u => u.Id == id);
+    }
     public void SaveAllToStorage()
     {
         daoNotification.SaveToStorage();

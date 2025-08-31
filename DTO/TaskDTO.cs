@@ -36,6 +36,7 @@ namespace TODOList.DTO
             dueDate = t.DueDate;
             isCompleted = t.IsCompleted;         
            userId = t.UserId;
+            IsToday = t.DueDate.Date == DateTime.Today;
         }
 
        
@@ -63,6 +64,19 @@ namespace TODOList.DTO
                 }
             }
         }
+
+        private bool _isToday;
+        public bool IsToday
+        {
+            get => _isToday;
+            set
+            {
+                _isToday = value;
+                OnPropertyChanged(nameof(IsToday));
+            }
+        }
+        public bool IsOverdue => DueDate.Date < DateTime.Today;
+
 
         private string title;
         public string Title

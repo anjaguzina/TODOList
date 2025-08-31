@@ -37,6 +37,8 @@ namespace TODOList.View
            
             _taskDTO = new TaskDTO();
             DataContext = _taskDTO;
+            datePickerDueDate.SelectedDate = null;
+            datePickerDueDate.DisplayDate = DateTime.Now;
         }
         private bool EmptyTextBoxCheck()
         {
@@ -102,12 +104,10 @@ namespace TODOList.View
             return validInput;
         }
 
-        private void textBox_TextChanged(object sender, EventArgs e)
+
+        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (InputCheck())
-                buttonAdd.IsEnabled = true;
-            else
-                buttonAdd.IsEnabled = false;
+            CheckEnableAddButton();
         }
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
@@ -117,14 +117,29 @@ namespace TODOList.View
         private void Confirm_Click(object sender, RoutedEventArgs e)
         {
             _taskDTO.UserId = _ownerId;
+            if (datePickerDueDate.SelectedDate.HasValue)
+            {
+                _taskDTO.DueDate = datePickerDueDate.SelectedDate.Value;
+            }
+
             _controller.AddTask(_taskDTO.ToTask());
             _controller.SaveAllToStorage();
             this.Close();
         }
 
+        private void CheckEnableAddButton()
+        {
+            // Dugme se aktivira samo ako su sva polja popunjena
+            bool isTitleFilled = !string.IsNullOrWhiteSpace(textBoxTitle.Text);
+            bool isDescriptionFilled = !string.IsNullOrWhiteSpace(textBoxDescription.Text);
+            bool isDateSelected = datePickerDueDate.SelectedDate.HasValue;
+
+            buttonAdd.IsEnabled = isTitleFilled && isDescriptionFilled && isDateSelected;
+        }
+
         private void datePickerDueDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            buttonAdd.IsEnabled = InputCheck();
+            CheckEnableAddButton();
         }
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)

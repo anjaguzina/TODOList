@@ -30,15 +30,18 @@ namespace TODOList.Model
 
         public UserRole Role { get; set; }
 
+        public string ProfileImagePath { get; set; }
+
         public User() { }
 
-        public User(int id, string username, string pass,string name, string surname, string mail, UserRole role) {
+        public User(int id, string username, string pass,string name, string surname, string mail, UserRole role, string profileImagePath) {
             Username = username;
             Password = pass;
             Name = name;
             Surname = surname;
             Email = mail;
             Role = role;
+            ProfileImagePath = profileImagePath;
         }
 
         public void Copy(User obj)
@@ -49,12 +52,12 @@ namespace TODOList.Model
             Surname = obj.Surname;
             Email = obj.Email;
             Role = obj.Role;
-            //Password = obj.Password; ovo vidi da li sme da se kopira zbog verifikacije i toga svega
-        
+            Password = obj.Password;
+            ProfileImagePath = obj.ProfileImagePath;
         }
 
         public string[] ToCSV() {
-            string[] csvValues = { Id.ToString(), Username, Password,Name, Surname, Email, Role.ToString() };
+            string[] csvValues = { Id.ToString(), Username, Password,Name, Surname, Email, Role.ToString(),ProfileImagePath };
             return csvValues;
         }
         public void FromCSV(string[] values) {
@@ -65,7 +68,7 @@ namespace TODOList.Model
             Surname = values[4];
             Email = values[5];
             Role = Enum.Parse<UserRole>(values[6]);
-
+            ProfileImagePath = values.Length > 7 ? values[7] : "";
         }
     }
 }

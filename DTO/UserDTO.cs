@@ -34,7 +34,8 @@ namespace TODOList.DTO
             surname = t.Surname;
             email = t.Email;
             password = t.Password;
-            role = t.Role;           
+            role = t.Role;
+            profileImagePath = t.ProfileImagePath;
         }
 
 
@@ -147,10 +148,22 @@ namespace TODOList.DTO
                 }
             }
         }
-
+        private string profileImagePath;
+        public string ProfileImagePath
+        {
+            get => profileImagePath;
+            set
+            {
+                if (value != profileImagePath)
+                {
+                    profileImagePath = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public User ToUser()
         {
-            return new User(id, username, password, name, surname, email, role);
+            return new User(id, username, password, name, surname, email, role,profileImagePath);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

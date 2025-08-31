@@ -3,85 +3,207 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TODOList.View"
         mc:Ignorable="d"
-        Title="MyProfile" Height="450" Width="800">
+        Title="MyProfile" Height="600" Width="1000"
+        Background="#F6F8FC">
 
-    <Grid Margin="10">
+    <Window.Resources>
+        <!-- Dugmad -->
+        <Style x:Key="RoundedButton" TargetType="Button">
+            <Setter Property="Background" Value="#CCE5FF"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Boje taskova -->
+        <SolidColorBrush x:Key="TaskBlue" Color="#D6EFFF"/>
+        <SolidColorBrush x:Key="TaskPurple" Color="#EADCF8"/>
+        <SolidColorBrush x:Key="TaskYellow" Color="#FFF9CC"/>
+        <SolidColorBrush x:Key="TaskPink" Color="#FDE2E4"/>
+        <SolidColorBrush x:Key="TaskTurquoise" Color="#DFF8F4"/>
+    </Window.Resources>
+
+    <Grid Margin="20">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Leva strana: Profilna i Import Image dugme -->
-        <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10">
-            <Border Width="120" Height="120" BorderBrush="Gray" BorderThickness="1" CornerRadius="60" Margin="0,10">
-                <Image x:Name="ProfileImage"
-                       Stretch="UniformToFill"
-                       ClipToBounds="True"
-                       Width="100" Height="100" />
-            </Border>
-            <Button Content="Import Image" Width="120" Margin="0,20,0,0" Click="ImportImage_Click"/>
-        </StackPanel>
-
-        <!-- Desna strana: Taskovi i dugmad -->
-        <Grid Grid.Column="1" Margin="20,10,10,10">
+        <!-- Leva strana: Profil i statuse -->
+        <Grid Grid.Column="0" Margin="10">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <!-- Lista taskova -->
                 <RowDefinition Height="Auto"/>
-                <!-- Dugmad za taskove -->
-                <RowDefinition Height="Auto"/>
-                <!-- Paginacija -->
             </Grid.RowDefinitions>
 
-            <!-- Lista taskova sa dugmetom za sortiranje -->
-            <Grid Grid.Row="0" Margin="0,0,0,10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <!-- dugme za sortiranje -->
-                    <RowDefinition Height="*"/>
-                    <!-- listbox zauzima sav preostali prostor -->
-                </Grid.RowDefinitions>
-
-                <Button Content="Sort by DueDate" Width="120" HorizontalAlignment="Left" Click="SortByDueDate_Click" Grid.Row="0" Margin="0,0,0,5"/>
-
-                <ListBox Name="TasksListBox" Grid.Row="1">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Description}" FontStyle="Italic" Foreground="DarkSlateGray" Margin="0,2,0,0"/>
-                                <TextBlock Text="{Binding DueDate, StringFormat='Due: {0:dd.MM.yyyy}'}" FontSize="12" Foreground="Gray"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
-
-            <!-- Dugmad za manipulaciju taskovima -->
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-                <Button Content="Add new Task" Width="100" Click="AddTask_Click"/>
-                <Button Content="Edit Task" Width="120" Click="EditTask_Click"/>
-                <Button Content="Delete Task" Width="100" Click="DeleteTask_Click"/>
+            <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <Border Width="130" Height="130" CornerRadius="65" Background="White" BorderThickness="0">
+                    <Image x:Name="ProfileImage" Stretch="UniformToFill" ClipToBounds="True" Width="130" Height="130" />
+                </Border>
+                <Button Content="Import Image" Width="140" Margin="0,25,0,0" Style="{StaticResource RoundedButton}" Click="ImportImage_Click"/>
             </StackPanel>
 
-            <!-- Paging control -->
-            <DockPanel Grid.Row="2" Margin="20,10,20,0" LastChildFill="False" Height="45" VerticalAlignment="Center">
-                <Button x:Name="buttonRightPage" DockPanel.Dock="Right" Click="MoveToRightPage"
-                        BorderBrush="{x:Null}" Background="Transparent" BorderThickness="0">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72A;" FontSize="16"/>
-                </Button>
+            <!-- Status taskova -->
+            <StackPanel Grid.Row="1" Margin="0,30,0,30" VerticalAlignment="Top" HorizontalAlignment="Center">
+                <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                    <Border x:Name="AllTasksBorder" Background="#DFF8F4" CornerRadius="15" Width="180" Height="60" Margin="0,5">
+                        <Grid>
+                            <TextBlock Text="All" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                            <TextBlock x:Name="AllTasksCount" Text="0" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="TodayTasksBorder" Background="#D6EFFF" CornerRadius="15" Width="180" Height="60" Margin="0,5">
+                        <Grid>
+                            <TextBlock Text="Today" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                            <TextBlock x:Name="TodayTasksCount" Text="0" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="OverdueTasksBorder" Background="#FDE2E4" CornerRadius="15" Width="180" Height="60" Margin="0,5">
+                        <Grid>
+                            <TextBlock Text="Overdue" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                            <TextBlock x:Name="OverdueTasksCount" Text="0" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
 
-                <Label x:Name="labelCurrentPage" Height="25" Width="40" DockPanel.Dock="Right"
-                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14"/>
+            <Button Grid.Row="3" Content="Log Out" Width="140" Style="{StaticResource RoundedButton}" Background="#4DA6FF" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="LogOut_Click"/>
+        </Grid>
 
-                <Button x:Name="buttonLeftPage" DockPanel.Dock="Right" Click="MoveToLeftPage"
-                        BorderBrush="{x:Null}" Background="Transparent" BorderThickness="0">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72B;" FontSize="16"/>
-                </Button>
+        <!-- Desna strana: Taskovi -->
+        <Grid Grid.Column="1" Margin="20,10,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Zaglavlje i Sort -->
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="textBlockHello" FontSize="16" FontWeight="Bold" Foreground="Black" VerticalAlignment="Center"/>
+                <Button Content="Sort by DueDate" Width="150" Background="#FFD6A5"
+                        Style="{StaticResource RoundedButton}" Click="SortByDueDate_Click" Grid.Column="1"/>
+            </Grid>
+
+            <!-- Lista taskova -->
+            <ListBox Name="TasksListBox" Grid.Row="1" BorderThickness="0" Background="Transparent" AlternationCount="5">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="15" BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="10">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <!-- Zavrseni task -->
+                                        <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                            <Setter Property="Background" Value="#B0B0B0"/>
+                                            <Setter Property="Opacity" Value="0.5"/>
+                                        </DataTrigger>
+
+                                        <!-- Alternating colors -->
+                                        <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="0">
+                                            <Setter Property="Background" Value="{StaticResource TaskBlue}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="1">
+                                            <Setter Property="Background" Value="{StaticResource TaskPurple}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="2">
+                                            <Setter Property="Background" Value="{StaticResource TaskYellow}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="3">
+                                            <Setter Property="Background" Value="{StaticResource TaskPink}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="4">
+                                            <Setter Property="Background" Value="{StaticResource TaskTurquoise}"/>
+                                        </DataTrigger>
+
+                                        <!-- DANAS task: svetlija crvena i border -->
+                                        <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                            <Setter Property="Background" Value="#FF7F7F"/>
+                                            <Setter Property="BorderBrush" Value="#FF7F7F"/>
+                                            <Setter Property="BorderThickness" Value="2"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,10,0"
+                                          Checked="TaskCompleted_Checked" Unchecked="TaskCompleted_Unchecked"/>
+
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                        <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                        <Setter Property="Foreground" Value="#990000"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                    <TextBlock Text="{Binding Description}" FontStyle="Italic" Foreground="DimGray" Margin="0,3,0,0"/>
+                                    <TextBlock Text="{Binding DueDate, StringFormat='Due: {0:dd.MM.yyyy}'}" FontSize="12" Foreground="Gray" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Dugmad + Pagination -->
+            <DockPanel Grid.Row="2" Margin="20,10,20,10" LastChildFill="False" Height="45" VerticalAlignment="Center">
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,10,0">
+                    <Button Content="Add new Task" Width="130" Margin="5,0" Background="#B5EAD7" Style="{StaticResource RoundedButton}" Click="AddTask_Click"/>
+                    <Button Content="Edit Task" Width="130" Margin="5,0" Background="#FFDAC1" Style="{StaticResource RoundedButton}" Click="EditTask_Click"/>
+                    <Button Content="Delete Task" Width="130" Margin="5,0" Background="#FFB7B2" Style="{StaticResource RoundedButton}" Click="DeleteTask_Click"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="buttonLeftPage" Click="MoveToLeftPage" BorderBrush="{x:Null}" Background="Transparent" BorderThickness="0">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72B;" FontSize="20"/>
+                    </Button>
+
+                    <Label x:Name="labelCurrentPage" Height="25" Width="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Foreground="Black"/>
+
+                    <Button x:Name="buttonRightPage" Click="MoveToRightPage" BorderBrush="{x:Null}" Background="Transparent" BorderThickness="0">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72A;" FontSize="20"/>
+                    </Button>
+                </StackPanel>
             </DockPanel>
-
         </Grid>
     </Grid>
 </Window>

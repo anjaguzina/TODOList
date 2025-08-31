@@ -5,17 +5,120 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TODOList.View"
         mc:Ignorable="d"
-        Title="ViewAllUsers" Height="450" Width="800">
-    <Grid>
-        <ListView x:Name="lvResults" Grid.Row="1">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="150"/>
-                    <GridViewColumn Header="Surname" DisplayMemberBinding="{Binding Surname}" Width="100"/>
-                    <GridViewColumn Header="Username" DisplayMemberBinding="{Binding Username}" Width="100"/>
-                    <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}" Width="200"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-    </Grid>
+        Title="All Users" Height="550" Width="800"
+        Background="#F6F8FC">
+
+    <Window.Resources>
+        <!-- Pastelne boje za kartice -->
+        <SolidColorBrush x:Key="UserCardBlue" Color="#D6EFFF"/>
+        <SolidColorBrush x:Key="UserCardPurple" Color="#EADCF8"/>
+        <SolidColorBrush x:Key="UserCardYellow" Color="#FFF9CC"/>
+        <SolidColorBrush x:Key="UserCardPink" Color="#FDE2E4"/>
+        <SolidColorBrush x:Key="UserCardTurquoise" Color="#DFF8F4"/>
+
+        <!-- Stil za zaobljeno dugme Log Out -->
+        <Style x:Key="RoundedBlueButton" TargetType="Button">
+            <Setter Property="Background" Value="#CCE5FF"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+        <!-- Pozdrav na vrhu -->
+        <TextBlock Text="Hello, admin!" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI"
+                   HorizontalAlignment="Center" Margin="0,15,0,15" DockPanel.Dock="Top"/>
+
+        <!-- Dugme Log Out na dnu -->
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Margin="0,10,0,10">
+            <Button Content="Log Out" Style="{StaticResource RoundedBlueButton}" Click="LogOut_Click"/>
+        </StackPanel>
+
+        <!-- Glavni prikaz sa headerom i scrollom -->
+        <StackPanel Margin="20,0,20,0">
+            <!-- Header -->
+            <!-- Header -->
+            <Border Background="#E0E0E0" Margin="0,0,0,5" CornerRadius="8">
+                <Grid Margin="10,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Username" FontWeight="Bold" Grid.Column="0"/>
+                    <TextBlock Text="Name" FontWeight="Bold" Grid.Column="1"/>
+                    <TextBlock Text="Surname" FontWeight="Bold" Grid.Column="2"/>
+                    <TextBlock Text="Email" FontWeight="Bold" Grid.Column="3"/>
+                </Grid>
+            </Border>
+
+            <!-- Scrollable list korisnika -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Height="380">
+                <ItemsControl x:Name="UsersItemsControl">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="15" BorderThickness="1" BorderBrush="Gray" Padding="15" Margin="0,5,0,5">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ContentPresenter}}" Value="0">
+                                                <Setter Property="Background" Value="{StaticResource UserCardBlue}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ContentPresenter}}" Value="1">
+                                                <Setter Property="Background" Value="{StaticResource UserCardPurple}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ContentPresenter}}" Value="2">
+                                                <Setter Property="Background" Value="{StaticResource UserCardYellow}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ContentPresenter}}" Value="3">
+                                                <Setter Property="Background" Value="{StaticResource UserCardPink}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ContentPresenter}}" Value="4">
+                                                <Setter Property="Background" Value="{StaticResource UserCardTurquoise}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Text="{Binding Username}" FontWeight="Bold" FontSize="14" Grid.Column="0"/>
+                                    <TextBlock Text="{Binding Name}" FontSize="13" Grid.Column="1"/>
+                                    <TextBlock Text="{Binding Surname}" FontSize="13" Grid.Column="2"/>
+                                    <TextBlock Text="{Binding Email}" FontSize="13" Grid.Column="3"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                    <ItemsControl.AlternationCount>5</ItemsControl.AlternationCount>
+                </ItemsControl>
+            </ScrollViewer>
+        </StackPanel>
+    </DockPanel>
 </Window>

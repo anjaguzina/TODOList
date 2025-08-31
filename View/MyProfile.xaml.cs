@@ -41,15 +41,30 @@ namespace TODOList.View
         public MyProfile(int userId)
         {
             InitializeComponent();
-            Uri uri = new Uri("https://cdn-icons-png.flaticon.com/512/847/847969.png");
-            BitmapImage bitmap = new BitmapImage(uri);
+           // Uri uri = new Uri("https://cdn-icons-png.flaticon.com/512/847/847969.png");
+          //  BitmapImage bitmap = new BitmapImage(uri);
             controller = new MainController();
             taskDTO = new TaskDTO();
-            ProfileImage.Source = bitmap;
+          //  ProfileImage.Source = bitmap;
             _userId = userId;
             Tasks = new ObservableCollection<TaskDTO>();
             TasksListBox.ItemsSource = Tasks;
             LoadTasks();
+            SetHelloUser();
+            var user = controller.GetUserById(_userId);
+            if (!string.IsNullOrEmpty(user.ProfileImagePath) && System.IO.File.Exists(user.ProfileImagePath))
+            {
+                BitmapImage bitmap = new BitmapImage(new Uri(user.ProfileImagePath));
+                ProfileImage.Source = bitmap;
+            }
+            else
+            {
+                // Default slika
+                Uri uri = new Uri("https://cdn-icons-png.flaticon.com/512/847/847969.png");
+                BitmapImage bitmap = new BitmapImage(uri);
+                ProfileImage.Source = bitmap;
+            }
+
         }
         public int CurrentPageNumber
         {
@@ -93,13 +108,24 @@ namespace TODOList.View
                 {
                     string selectedFile = openFileDialog.FileName;
 
-                    BitmapImage bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.UriSource = new Uri(selectedFile);
-                    bitmap.EndInit();
+                    // Kopiraj sliku u folder aplikacije (npr. "ProfileImages") da uvek bude dostupna
+                    string imagesFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProfileImages");
+                    if (!Directory.Exists(imagesFolder))
+                        Directory.CreateDirectory(imagesFolder);
 
-                    ProfileImage.Source = bitmap; // ProfileImage je ime <Image> kontrole u XAML-u
+                    string fileName = $"{_userId}_{System.IO.Path.GetFileName(selectedFile)}";
+                    string destPath = System.IO.Path.Combine(imagesFolder, fileName);
+
+                    System.IO.File.Copy(selectedFile, destPath, true);
+
+                    // Postavi putanju slike u model korisnika
+                    var user = controller.GetUserById(_userId);
+                    user.ProfileImagePath = destPath;
+                    controller.UpdateUser(user);
+
+                    // Prikaz slike u Image kontrolu
+                    BitmapImage bitmap = new BitmapImage(new Uri(destPath));
+                    ProfileImage.Source = bitmap;
                 }
                 catch (Exception ex)
                 {
@@ -163,22 +189,34 @@ namespace TODOList.View
         {
             Tasks.Clear();
 
-            var allTasks = controller.GetAllTasks(); // ili kako već dobijaš listu taskova
-            var userTasks = allTasks.Where(t => t.UserId == _userId);
-            foreach (var t in userTasks)
+            var allTasks = controller.GetAllTasks().Where(t => t.UserId == _userId).ToList();
+
+            // Popuni Tasks ObservableCollection sa DTO
+            foreach (var t in allTasks)
             {
-                Tasks.Add(new TaskDTO(t));
+                var dto = new TaskDTO(t);
+                dto.IsToday = t.DueDate.Date == DateTime.Today; // ovo je ključno
+                Tasks.Add(dto);
             }
-            _filteredTasks = new ObservableCollection<TaskDTO>(
-    userTasks.Select(t => new TaskDTO(t))
-);
+
+            // Filter za paginaciju
+            _filteredTasks = new ObservableCollection<TaskDTO>(allTasks.Select(t =>
+            {
+                var dto = new TaskDTO(t);
+                dto.IsToday = t.DueDate.Date == DateTime.Today;
+                return dto;
+            }));
 
             TotalNumberOfPages = Math.Max(1, (int)Math.Ceiling((double)_filteredTasks.Count / _maxItemsPerPage));
             CurrentPageNumber = 1;
 
             ChangeMovePageButtonsVisibility();
             ApplyPaging(this, null);
+
+            // UPDATE BROJAČA
+            UpdateTaskCounters();
         }
+
 
         private void MoveToLeftPage(object sender, RoutedEventArgs e)
         {
@@ -252,12 +290,41 @@ namespace TODOList.View
                 return;
 
             // Prikaži samo stavke za trenutnu stranicu
-            var pagedTasks = _filteredTasks
-                .Skip((CurrentPageNumber - 1) * _maxItemsPerPage)
-                .Take(_maxItemsPerPage)
-                .ToList();
+            var pagedTasks = new ObservableCollection<TaskDTO>(
+                _filteredTasks
+                    .Skip((CurrentPageNumber - 1) * _maxItemsPerPage)
+                    .Take(_maxItemsPerPage)
+            );
 
             TasksListBox.ItemsSource = pagedTasks;
+        }
+
+        private void SetHelloUser()
+        {
+            try
+            {
+                // Dohvati sve korisnike iz kontrolera
+                var allUsers = controller.GetAllUsers();
+
+                // Pronađi korisnika po _userId
+                var currentUser = allUsers.FirstOrDefault(u => u.Id == _userId);
+
+                if (currentUser != null)
+                {
+                    // Prikaži ime korisnika u TextBlock-u
+                    string fullName = currentUser.Name; // ili $"{currentUser.Name} {currentUser.Surname}" za puno ime
+                    textBlockHello.Text = $"Hello, {fullName}!";
+                }
+                else
+                {
+                    textBlockHello.Text = "Hello, User";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading user info: " + ex.Message);
+                textBlockHello.Text = "Hello, User";
+            }
         }
 
         private void SortByDueDate_Click(object sender, RoutedEventArgs e)
@@ -283,5 +350,57 @@ namespace TODOList.View
             ChangeMovePageButtonsVisibility();
             ApplyPaging(this, null);
         }
+
+        private void LogOut_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Otvori LogInForm
+                LogInForm loginWindow = new LogInForm();
+                loginWindow.Show();
+
+                // Zatvori MyProfile prozor
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error logging out: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void UpdateTaskCounters()
+        {
+            var allTasks = controller.GetAllTasks().Where(t => t.UserId == _userId).ToList();
+            int allCount = allTasks.Count;
+            int todayCount = allTasks.Count(t => t.DueDate.Date == DateTime.Today);
+            int overdueCount = allTasks.Count(t => t.DueDate.Date < DateTime.Today);
+
+            AllTasksCount.Text = allCount.ToString();
+            TodayTasksCount.Text = todayCount.ToString();
+            OverdueTasksCount.Text = overdueCount.ToString();
+        }
+
+
+        private void TaskCompleted_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox checkBox && checkBox.DataContext is TaskDTO task)
+            {
+                task.IsCompleted = true;
+                controller.UpdateTask(task.ToTask());
+                controller.SaveAllToStorage();
+                LoadTasks(); // osveži listu
+            }
+        }
+
+        private void TaskCompleted_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox checkBox && checkBox.DataContext is TaskDTO task)
+            {
+                task.IsCompleted = false;
+                controller.UpdateTask(task.ToTask());
+                controller.SaveAllToStorage();
+                LoadTasks();
+            }
+        }
+
     }
 }
