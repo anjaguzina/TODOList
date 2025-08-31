@@ -34,11 +34,14 @@ namespace TODOList.View
             _controller = controller;
             _defaultBrushBorder = textBoxTitle.BorderBrush.Clone();
             _ownerId = ownerId;
-           
-            _taskDTO = new TaskDTO();
+
+            _taskDTO = new TaskDTO
+            {
+                DueDate = DateTime.Today
+            };
             DataContext = _taskDTO;
-            datePickerDueDate.SelectedDate = null;
-            datePickerDueDate.DisplayDate = DateTime.Now;
+            datePickerDueDate.SelectedDate = _taskDTO.DueDate;
+            datePickerDueDate.DisplayDate = DateTime.Today;
         }
         private bool EmptyTextBoxCheck()
         {
